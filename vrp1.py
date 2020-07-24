@@ -1,3 +1,14 @@
+"""
+2-opt & K-means
+
+Steps of the algorithm:
+1. Creation of a given number of clusters
+2. Creation of an optimal path (loop) for each cluster
+
+Graph Optimisation : basic 2-opt algorithm
+K-means : centroid-based method
+"""
+
 from random import randint, sample
 from math import sqrt
 import matplotlib.pyplot as plt
