@@ -64,9 +64,9 @@ def reverse_sublist(lst, start, end):
     return lst
 
 
-NUMBER_VERTICES = 30
-NUMBER_CLUSTERS = 8  # up to 8
-NUMBER_ITERATIONS = 10 ** 4
+NUMBER_VERTICES = 100
+NUMBER_CLUSTERS = 4  # up to 8
+NUMBER_ITERATIONS = 10 ** 5
 WIDTH = HEIGHT = 100  # dimension of the canvas
 VERTEX_SIZE = 150
 COLORS = ['orange', 'red', 'purple', 'green', 'black', 'grey', 'pink', 'cyan']
