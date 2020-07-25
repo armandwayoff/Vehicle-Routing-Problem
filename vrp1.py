@@ -1,10 +1,8 @@
 """
 2-opt & K-means
-
 Steps of the algorithm:
 1. Creation of a given number of clusters
 2. Creation of an optimal path (loop) for each cluster
-
 Graph Optimisation : basic 2-opt algorithm
 K-means : centroid-based method
 """
@@ -76,11 +74,11 @@ def reverse_sublist(lst, start, end):
 
 
 NUMBER_VERTICES = 100
-NUMBER_CLUSTERS = 4  # up to 8
+NUMBER_CLUSTERS = 5  # up to 6
 NUMBER_ITERATIONS = 10 ** 5
 WIDTH = HEIGHT = 100  # dimension of the canvas
 VERTEX_SIZE = 150
-COLORS = ['orange', 'red', 'purple', 'green', 'black', 'grey', 'pink', 'cyan']
+COLORS = ['orange', 'red', 'cyan', 'green', 'pink', 'purple']
 
 vertices = []
 G = nx.Graph()
@@ -96,7 +94,6 @@ for i in range(NUMBER_VERTICES):
     new_vertex = Vertex(randint(1, WIDTH), randint(1, HEIGHT))
     vertices.append(new_vertex)
     G.add_node(i, pos=(new_vertex.x, new_vertex.y))
-pos = nx.get_node_attributes(G, 'pos')
 
 # initialisation
 initial_vertices = sample(vertices, NUMBER_CLUSTERS)
@@ -122,28 +119,47 @@ print("--- %s seconds ---" % (time.time() - start_time))
 
 # graphs
 # --------------------------------------------------------------
+
+platform = Vertex(WIDTH / 2, HEIGHT / 2)
+vertices.append(platform)
+G.add_node(NUMBER_VERTICES, pos=(platform.x, platform.y))
+node_color.append('silver')
+
 for cluster in clusters:
+    current_color = COLORS[clusters.index(cluster)]
     if len(cluster) > 2:
         path = [vertices.index(vertex) for vertex in cluster]  # initial path
-        path.append(path[0])  # creation of the loop
+        # adding "platform" at the beginning and the end of the path
+        path.insert(0, NUMBER_VERTICES)
+        path.append(path[0])
         record_distance = dist(0, 0, WIDTH, HEIGHT) * NUMBER_VERTICES
         for i in range(NUMBER_ITERATIONS):
-            selected_vertices = sample(range(1, len(path) - 1), 2)
+            selected_vertices = sample(range(1, len(cluster) + 1), 2)
             test = path.copy()
             test = reverse_sublist(test, selected_vertices[0], selected_vertices[1])
             test_distance = total_distance(test)
             if test_distance < record_distance:
                 record_distance = test_distance
                 path = test
-        for i in range(len(cluster)):
-            G.add_edge(path[i], path[i + 1])
+        for i in range(len(cluster) + 1):
+            G.add_edge(path[i], path[i + 1], color=current_color)
     if len(cluster) == 2:
-        G.add_edge(vertices.index(cluster[0]), vertices.index(cluster[1]))
+        G.add_edge(vertices.index(cluster[0]), vertices.index(cluster[1]), color=current_color)
 
 print("Graphs : ✓")
 print("--- %s seconds ---" % (time.time() - start_time))
 # --------------------------------------------------------------
-
+edges = G.edges()
+colors = [G[u][v]['color'] for u,v in edges]
+pos = nx.get_node_attributes(G, 'pos')
+color = nx.get_edge_attributes(G, 'color')
 plt.figure(str(NUMBER_CLUSTERS) + "-means | Iteration " + str(iteration))
-nx.draw(G, pos, node_size=VERTEX_SIZE, node_color=node_color, with_labels=True)
+nx.draw(G,
+        pos,
+        node_size=VERTEX_SIZE,
+        node_color=node_color,
+        edge_color=colors,
+        width=4,
+        with_labels=True,
+        font_size=12)
 plt.show()
