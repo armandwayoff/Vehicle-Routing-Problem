@@ -1,5 +1,5 @@
 """
-2-opt & K-means
+* Vehicle Routing Problem *
 Steps of the algorithm:
 1. Creation of a given number of clusters
 2. Creation of an optimal path (loop) for each cluster
@@ -74,7 +74,7 @@ def reverse_sublist(lst, start, end):
 
 
 NUMBER_VERTICES = 100
-NUMBER_CLUSTERS = 5  # up to 6
+NUMBER_CLUSTERS = 4  # up to 6
 NUMBER_ITERATIONS = 10 ** 5
 WIDTH = HEIGHT = 100  # dimension of the canvas
 VERTEX_SIZE = 150
@@ -83,7 +83,7 @@ COLORS = ['orange', 'red', 'cyan', 'green', 'pink', 'purple']
 vertices = []
 G = nx.Graph()
 
-print("* 2-opt & K-means *")
+print("* Vehicle Routing Problem *")
 print("Number of vertices :", NUMBER_VERTICES,
       "| Number of clusters :", NUMBER_CLUSTERS,
       "| Dimensions of the canvas : (" + str(WIDTH), ";", str(HEIGHT) + ")\n")
@@ -149,16 +149,15 @@ for cluster in clusters:
 print("Graphs : ✓")
 print("--- %s seconds ---" % (time.time() - start_time))
 # --------------------------------------------------------------
-edges = G.edges()
-colors = [G[u][v]['color'] for u,v in edges]
+
+edge_colors = [G[u][v]['color'] for u,v in G.edges()]
 pos = nx.get_node_attributes(G, 'pos')
-color = nx.get_edge_attributes(G, 'color')
 plt.figure(str(NUMBER_CLUSTERS) + "-means | Iteration " + str(iteration))
 nx.draw(G,
         pos,
         node_size=VERTEX_SIZE,
         node_color=node_color,
-        edge_color=colors,
+        edge_color=edge_colors,
         width=4,
         with_labels=True,
         font_size=12)
