@@ -7,7 +7,7 @@ Graph Optimisation : basic 2-opt algorithm
 Clustering : centroid-based method
 """
 
-from random import randint, sample
+from random import *
 from math import sqrt
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -19,8 +19,6 @@ def dist(x1, y1, x2, y2):
 
 
 # cluster's functions
-
-
 def create_clusters(reference_elements, elements_to_organise):
     global target_index
     new_node_color = []
@@ -48,8 +46,6 @@ def centroid_of(lst):
 
 
 # graph's functions
-
-
 def total_distance(lst):
     d = 0
     for j in range(len(lst) - 1):
@@ -89,9 +85,10 @@ def convex_hull(points):
     return lower[:-1] + upper[:-1]
 
 
-NUMBER_VERTICES = 40
-NUMBER_CLUSTERS = 3  # up to 6
+NUMBER_VERTICES = 20
+NUMBER_CLUSTERS = 2  # up to 6
 NUMBER_ITERATIONS = 10 ** 4
+NUMBER_ITERATIONS2 = 10 ** 3
 WIDTH = HEIGHT = 100  # dimension of the canvas
 VERTEX_SIZE = 150
 COLORS = ['orange', 'red', 'cyan', 'green', 'pink', 'purple']
@@ -140,6 +137,8 @@ vertices.append(platform)
 G.add_node(NUMBER_VERTICES, pos=(platform[0], platform[1]))
 node_color.append('silver')
 
+pos = nx.get_node_attributes(G, 'pos')
+
 for cluster in clusters:
     current_color = COLORS[clusters.index(cluster)]
     if len(cluster) > 2:
@@ -163,17 +162,27 @@ for cluster in clusters:
 
 print("Graphs : ✓")
 print("--- %s seconds ---" % (time.time() - start_time))
+plt.figure(str(NUMBER_CLUSTERS) + "-means | Iteration " + str(iteration) + " (before exchange between clusters)")
 # --------------------------------------------------------------
 
 # exchange vertices between clusters
 # --------------------------------------------------------------
+# determine the convex hull of each cluster
+hulls = []
 for cluster in clusters:
-    hull = [vertices.index(vertex) for vertex in convex_hull(cluster)]
-    print(hull)
+    hulls.append([vertex for vertex in convex_hull(cluster)])
+
+# 1. select two clusters:
+# one from which we will select vertex ([0]) and one in which we will try to insert it at a random location ([1])
+# for i in range(len(NUMBER_ITERATIONS2)):
+selected_clusters = sample(clusters, 2)
+selected_hull = hulls[clusters.index(selected_clusters[0])]
+selected_vertex = choice(selected_hull)
+selected_location = choice(range(len(selected_clusters[1])))
+print(vertices.index(selected_vertex), vertices.index(selected_clusters[1][selected_location]))
 # --------------------------------------------------------------
 
 edge_colors = [G[u][v]['color'] for u,v in G.edges()]
-pos = nx.get_node_attributes(G, 'pos')
 plt.figure(str(NUMBER_CLUSTERS) + "-means | Iteration " + str(iteration))
 nx.draw(G,
         pos,
